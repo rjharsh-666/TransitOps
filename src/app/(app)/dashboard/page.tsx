@@ -11,20 +11,12 @@ type Kpis = {
   pendingTrips: number;
   driversOnDuty: number;
   fleetUtilizationPct: number;
+  weeklyTrend?: number[];
 };
 
 const weeklyTrend = [38, 66, 50, 84, 95, 88, 72, 98];
 
-const dispatches = [
-  { tripId: "TRP-8492", driver: "John Doe", route: "Chicago → Detroit", status: "On Time", eta: "14:30 EST" },
-  { tripId: "TRP-8493", driver: "Alice Smith", route: "NY → Boston", status: "Delayed", eta: "16:45 EST" },
-  { tripId: "TRP-8494", driver: "Marcus Lee", route: "Dallas → Austin", status: "On Time", eta: "12:10 CST" },
-];
 
-const actionItems = [
-  { title: "Vehicle #402 - Oil Change", detail: "Overdue by 250 miles", tone: "urgent" },
-  { title: "Vehicle #118 - Tire Rotation", detail: "Due in 2 days", tone: "warning" },
-];
 
 function StatCard({ label, value, sublabel, accent = false }: { label: string; value: string; sublabel?: string; accent?: boolean }) {
   return (
@@ -70,9 +62,55 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
 
 export default function DashboardPage() {
   const [kpis, setKpis] = useState<Kpis | null>(null);
+  const [dispatches, setDispatches] = useState<any[]>([]);
+  const [actionItems, setActionItems] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/api/dashboard/kpis").then((response) => response.json()).then(setKpis);
+    async function loadDashboardData() {
+      try {
+        const [kpiRes, tripsRes, maintRes] = await Promise.all([
+          fetch("/api/dashboard/kpis"),
+          fetch("/api/trips?status=Dispatched"),
+          fetch("/api/maintenance"),
+        ]);
+
+        const [kpiData, tripsData, maintData] = await Promise.all([
+          kpiRes.json(),
+          tripsRes.json(),
+          maintRes.json(),
+        ]);
+
+        setKpis(kpiData);
+
+        if (Array.isArray(tripsData)) {
+          const mappedTrips = tripsData.map((trip: any) => ({
+            tripId: `TRP-${trip.id}`,
+            driver: trip.driver?.name ?? "Unknown",
+            route: `${trip.source} → ${trip.destination}`,
+            status: trip.status === "Dispatched" ? "On Time" : trip.status,
+            eta: trip.dispatchedAt
+              ? new Date(new Date(trip.dispatchedAt).getTime() + 4 * 60 * 60 * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              : "18:00 EST",
+          }));
+          setDispatches(mappedTrips.slice(0, 3));
+        }
+
+        if (Array.isArray(maintData)) {
+          const openMaint = maintData
+            .filter((log: any) => log.status === "Open")
+            .map((log: any) => ({
+              title: `Vehicle #${log.vehicle?.registrationNumber ?? log.vehicleId} - ${log.maintenanceType}`,
+              detail: `${log.description || "Scheduled maintenance"} · Cost: $${Number(log.cost).toFixed(0)}`,
+              tone: Number(log.cost) > 200 ? "urgent" : "warning",
+            }));
+          setActionItems(openMaint.slice(0, 2));
+        }
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      }
+    }
+
+    loadDashboardData();
   }, []);
 
   const totalVehicles = (kpis?.activeVehicles ?? 0) + (kpis?.availableVehicles ?? 0) + (kpis?.vehiclesInMaintenance ?? 0);
@@ -185,7 +223,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="mt-6 grid grid-cols-8 items-end gap-3">
-              {weeklyTrend.map((value, index) => (
+              {(kpis?.weeklyTrend ?? weeklyTrend).map((value, index) => (
                 <div key={index} className="flex flex-col items-center gap-2">
                   <div
                     className="w-full rounded-t-2xl bg-gradient-to-t from-blue-500 to-cyan-300 shadow-[0_16px_24px_-18px_rgba(96,165,250,0.9)]"
@@ -235,17 +273,21 @@ export default function DashboardPage() {
               <span>ETA</span>
             </div>
             <div className="divide-y divide-slate-100 bg-white">
-              {dispatches.map((dispatch) => (
-                <div key={dispatch.tripId} className="grid grid-cols-[1.1fr_1fr_1.2fr_0.8fr_0.7fr] gap-4 px-4 py-4 text-sm">
-                  <span className="font-semibold text-blue-600">{dispatch.tripId}</span>
-                  <span className="text-slate-700">{dispatch.driver}</span>
-                  <span className="text-slate-700">{dispatch.route}</span>
-                  <span>
-                    <Badge tone={dispatch.status === "On Time" ? "success" : "warning"}>{dispatch.status}</Badge>
-                  </span>
-                  <span className={dispatch.status === "Delayed" ? "font-semibold text-rose-600" : "font-semibold text-slate-700"}>{dispatch.eta}</span>
-                </div>
-              ))}
+              {dispatches.length === 0 ? (
+                <div className="px-4 py-8 text-center text-sm text-slate-500">No active dispatches.</div>
+              ) : (
+                dispatches.map((dispatch) => (
+                  <div key={dispatch.tripId} className="grid grid-cols-[1.1fr_1fr_1.2fr_0.8fr_0.7fr] gap-4 px-4 py-4 text-sm">
+                    <span className="font-semibold text-blue-600">{dispatch.tripId}</span>
+                    <span className="text-slate-700">{dispatch.driver}</span>
+                    <span className="text-slate-700">{dispatch.route}</span>
+                    <span>
+                      <Badge tone={dispatch.status === "On Time" ? "success" : "warning"}>{dispatch.status}</Badge>
+                    </span>
+                    <span className={dispatch.status === "Delayed" ? "font-semibold text-rose-600" : "font-semibold text-slate-700"}>{dispatch.eta}</span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -257,21 +299,29 @@ export default function DashboardPage() {
                 <h2 className="text-lg font-semibold tracking-tight text-slate-950">Action Required</h2>
                 <p className="mt-1 text-sm text-slate-500">Items needing attention today.</p>
               </div>
-              <Badge tone="danger">2 alerts</Badge>
+              <Badge tone={actionItems.length > 0 ? "danger" : "neutral"}>
+                {actionItems.length} {actionItems.length === 1 ? "alert" : "alerts"}
+              </Badge>
             </div>
 
             <div className="mt-5 space-y-3">
-              {actionItems.map((item) => (
-                <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <div className={item.tone === "urgent" ? "rounded-xl bg-rose-100 p-2 text-rose-600" : "rounded-xl bg-amber-100 p-2 text-amber-600"}>
-                    <Bell className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-950">{item.title}</p>
-                    <p className="mt-1 text-sm text-slate-500">{item.detail}</p>
-                  </div>
+              {actionItems.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-center text-sm text-slate-500 bg-slate-50/50">
+                  All systems clear. No actions required.
                 </div>
-              ))}
+              ) : (
+                actionItems.map((item) => (
+                  <div key={item.title} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div className={item.tone === "urgent" ? "rounded-xl bg-rose-100 p-2 text-rose-600" : "rounded-xl bg-amber-100 p-2 text-amber-600"}>
+                      <Bell className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-950">{item.title}</p>
+                      <p className="mt-1 text-sm text-slate-500">{item.detail}</p>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
