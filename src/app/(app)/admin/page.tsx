@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { toast } from "sonner";
 import type { Role } from "@/lib/rbac";
 
@@ -58,11 +59,13 @@ const ROLES: Role[] = ["Pending", "Admin", "FleetManager", "Driver", "SafetyOffi
 const FINAL_ROLES: Exclude<Role, "Pending">[] = ["Admin", "FleetManager", "Driver", "SafetyOfficer", "FinancialAnalyst"];
 
 export default function AdminPage() {
+  const { user } = useUser();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [driverApplications, setDriverApplications] = useState<DriverApplication[]>([]);
   const [roleRequests, setRoleRequests] = useState<RoleRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
+  const [deletingUsers, setDeletingUsers] = useState<Record<string, boolean>>({});
   const [selectedRoles, setSelectedRoles] = useState<Record<number, Exclude<Role, "Pending">>>({});
 
   async function loadData() {
@@ -139,6 +142,35 @@ export default function AdminPage() {
     }
     toast.success("Role updated");
     await loadData();
+  }
+
+  async function deleteUser(userId: string, userName: string | null, email: string) {
+    if (userId === user?.id) {
+      toast.error("You cannot delete your own account from this page");
+      return;
+    }
+
+    const confirmed = window.confirm(`Delete ${userName ?? email}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setDeletingUsers((current) => ({ ...current, [userId]: true }));
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: "DELETE",
+      });
+      const payload = await response.json();
+
+      if (!response.ok) {
+        toast.error(payload.error ?? "Failed to delete user");
+        return;
+      }
+
+      toast.success("User deleted");
+      await loadData();
+    } finally {
+      setDeletingUsers((current) => ({ ...current, [userId]: false }));
+    }
   }
 
   async function reviewDriverApplication(applicationId: number, action: "approve" | "deny") {
@@ -319,18 +351,19 @@ export default function AdminPage() {
               <th>Signup Type</th>
               <th>Status</th>
               <th>Updated</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td className="px-4 py-6 text-slate-500" colSpan={5}>
+                <td className="px-4 py-6 text-slate-500" colSpan={8}>
                   Loading users...
                 </td>
               </tr>
             ) : users.length === 0 ? (
               <tr>
-                <td className="px-4 py-6 text-slate-500" colSpan={7}>
+                <td className="px-4 py-6 text-slate-500" colSpan={8}>
                   No users found. Sync from Clerk to import accounts.
                 </td>
               </tr>
@@ -356,6 +389,16 @@ export default function AdminPage() {
                   <td>{user.signupType ?? "—"}</td>
                   <td>{user.signupStatus}</td>
                   <td>{new Date(user.updatedAt).toLocaleString()}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      type="button"
+                      onClick={() => deleteUser(user.id, user.name, user.email)}
+                      disabled={deletingUsers[user.id]}
+                      className="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-rose-500 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {deletingUsers[user.id] ? "Deleting..." : "Delete User"}
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
