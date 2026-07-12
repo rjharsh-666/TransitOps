@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Download, IndianRupee, TrendingUp, Activity, CheckCircle } from "lucide-react";
+import { Search, IndianRupee, TrendingUp, Activity, CheckCircle, X } from "lucide-react";
 import { ExpenseFormDialog } from "@/components/expense-form-dialog";
 
 type Expense = {
@@ -98,6 +98,7 @@ function ExpenseCategoryItem({
 
 export default function ExpensesPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [search, setSearch] = useState("");
   const [metrics, setMetrics] = useState<FinancialMetrics>({
     totalOperatingCost: 142850,
     fleetROI: 24.8,
@@ -146,6 +147,13 @@ export default function ExpensesPage() {
     { category: "Driver Pay", amount: Math.round(totalExpenses * 0.13), percentage: 13, color: "bg-slate-300" },
   ];
 
+  const filteredExpenses = expenses.filter(
+    (exp) =>
+      !search ||
+      exp.vehicle?.registrationNumber?.toLowerCase().includes(search.toLowerCase()) ||
+      exp.expenseType?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="rounded-[2rem] border border-slate-200/80 bg-[radial-gradient(circle_at_top,_rgba(37,99,235,0.14),_transparent_34%),linear-gradient(180deg,_rgba(248,250,252,0.98),_rgba(241,245,249,0.98))] p-5 text-slate-950 shadow-[0_30px_100px_-45px_rgba(15,23,42,0.45)]">
       {/* Header Section */}
@@ -156,10 +164,6 @@ export default function ExpensesPage() {
           <p className="mt-2 text-sm text-slate-500">Comprehensive overview of fleet operational costs.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <button className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-            <Download className="h-4 w-4" />
-            Export Financial Report
-          </button>
           <ExpenseFormDialog onCreated={load} />
         </div>
       </div>
@@ -247,15 +251,20 @@ export default function ExpensesPage() {
       <div className="mt-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-slate-950">Recent Expenses</h3>
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white/50 px-3 text-slate-400 shadow-sm">
-              <Search className="h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Search..."
-                className="bg-transparent text-sm text-slate-950 outline-none"
-              />
-            </div>
+          <div className="relative flex h-9 items-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-slate-400 shadow-sm">
+            <Search className="h-4 w-4 shrink-0" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search expenses..."
+              className="bg-transparent text-sm text-slate-950 placeholder:text-slate-400 outline-none w-40"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="shrink-0 text-slate-400 hover:text-slate-700">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -271,14 +280,14 @@ export default function ExpensesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200/50">
-              {expenses.length === 0 ? (
+              {filteredExpenses.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
-                    No expenses recorded yet. Add your first expense to get started.
+                  <td colSpan={5} className="px-6 py-12 text-center text-sm text-slate-500">
+                    {search ? "No expenses match your search." : "No expenses recorded yet. Add your first expense to get started."}
                   </td>
                 </tr>
               ) : (
-                expenses.slice(0, 10).map((expense) => (
+                filteredExpenses.slice(0, 20).map((expense) => (
                   <tr key={expense.id} className="hover:bg-slate-50/50 transition">
                     <td className="px-6 py-4 font-medium text-slate-950">{new Date(expense.expenseDate).toLocaleDateString()}</td>
                     <td className="px-6 py-4 font-medium text-slate-950">{expense.vehicle?.registrationNumber ?? "—"}</td>

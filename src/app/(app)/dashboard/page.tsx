@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { ArrowRight, Bell, Download, MoonStar, Plus, Search, Truck, Users, Wrench } from "lucide-react";
+import { Bell, MoonStar, Truck, Users, Wrench } from "lucide-react";
 
 type Kpis = {
   activeVehicles: number;
@@ -131,25 +131,6 @@ export default function DashboardPage() {
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.35em] text-slate-500">Executive Overview</p>
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Real-time metrics for network operations.</h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex h-11 w-full min-w-[260px] max-w-sm items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm sm:w-auto">
-            <Search className="h-4 w-4" />
-            <span className="text-sm">Search vehicles, drivers, routes...</span>
-          </div>
-          <button className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-            <Download className="h-4 w-4" />
-            Export
-          </button>
-          {canCreateVehicle ? (
-            <Link
-              href="/vehicles/add"
-              className="inline-flex h-11 items-center gap-2 rounded-full bg-blue-600 px-4 text-sm font-medium text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.85)] transition hover:bg-blue-500"
-            >
-              <Plus className="h-4 w-4" />
-              Add Vehicle
-            </Link>
-          ) : null}
         </div>
       </div>
 

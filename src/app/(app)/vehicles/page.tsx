@@ -2,9 +2,9 @@
 
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { Filter, Search, ShieldCheck, Truck, Wrench, Route } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Filter, Plus, Search, ShieldCheck, Truck, Wrench, Route, X } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
-import { VehicleFormDialog } from "@/components/vehicle-form-dialog";
 
 type Vehicle = {
   id: number;
@@ -50,9 +50,16 @@ function SummaryCard({
   );
 }
 
+const STATUS_OPTIONS = ["All", "Available", "OnTrip", "InShop"];
+
 export default function VehiclesPage() {
   const { isLoaded, user } = useUser();
+  const router = useRouter();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [showFilter, setShowFilter] = useState(false);
+
   const role = user?.publicMetadata?.role as string | undefined;
   const canCreateVehicle = isLoaded && (role === "Admin" || role === "FleetManager");
 
@@ -66,6 +73,16 @@ export default function VehiclesPage() {
       await load();
     })();
   }, []);
+
+  const filtered = vehicles.filter((v) => {
+    const matchSearch =
+      !search ||
+      v.registrationNumber.toLowerCase().includes(search.toLowerCase()) ||
+      v.nameModel.toLowerCase().includes(search.toLowerCase()) ||
+      (v.region ?? "").toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === "All" || v.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
 
   const totalVehicles = vehicles.length;
   const availableVehicles = vehicles.filter((vehicle) => vehicle.status === "Available").length;
@@ -81,23 +98,64 @@ export default function VehiclesPage() {
           <p className="mt-2 text-sm text-slate-500">Manage and track your entire fleet.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex h-11 w-full min-w-[240px] max-w-sm items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm sm:w-auto">
-            <Search className="h-4 w-4" />
-            <span className="text-sm">Search vehicles...</span>
+          {/* Functional Search */}
+          <div className="relative flex h-11 w-full min-w-[240px] max-w-sm items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm sm:w-auto">
+            <Search className="h-4 w-4 shrink-0" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search vehicles..."
+              className="flex-1 border-0 bg-transparent text-sm text-slate-950 placeholder:text-slate-400 outline-none"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="shrink-0 text-slate-400 hover:text-slate-700">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-          <button className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
-            <Filter className="h-4 w-4" />
-            Filter
-          </button>
-          {canCreateVehicle ? <VehicleFormDialog onCreated={load} /> : null}
+
+          {/* Filter Toggle */}
+          <div className="relative">
+            <button
+              onClick={() => setShowFilter((p) => !p)}
+              className={`inline-flex h-11 items-center gap-2 rounded-full border px-4 text-sm font-medium shadow-sm transition ${showFilter ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"}`}
+            >
+              <Filter className="h-4 w-4" />
+              {statusFilter === "All" ? "Filter" : statusFilter}
+            </button>
+            {showFilter && (
+              <div className="absolute right-0 top-full z-20 mt-2 w-40 rounded-2xl border border-slate-200 bg-white shadow-xl">
+                {STATUS_OPTIONS.map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => { setStatusFilter(s); setShowFilter(false); }}
+                    className={`flex w-full items-center px-4 py-2.5 text-sm transition first:rounded-t-2xl last:rounded-b-2xl ${statusFilter === s ? "bg-slate-950 text-white font-semibold" : "text-slate-700 hover:bg-slate-50"}`}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {canCreateVehicle ? (
+            <button
+              onClick={() => router.push("/vehicles/add")}
+              className="inline-flex h-11 items-center gap-2 rounded-full bg-slate-950 px-5 text-sm font-semibold text-white shadow-[0_8px_24px_-8px_rgba(15,23,42,0.4)] transition hover:bg-slate-800 active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" />
+              New Vehicle
+            </button>
+          ) : null}
         </div>
       </div>
 
       <div className="mt-6 grid gap-4 xl:grid-cols-4">
         <SummaryCard label="Total Fleet" value={totalVehicles} icon={<Truck className="h-5 w-5" />} />
-        <SummaryCard label="Available" value={availableVehicles} icon={<ShieldCheck className="h-5 w-5" />} />
-        <SummaryCard label="On Trip" value={onTripVehicles} icon={<Route className="h-5 w-5" />} />
-        <SummaryCard label="In Shop" value={inShopVehicles} icon={<Wrench className="h-5 w-5" />} tone="blue" />
+        <SummaryCard label="Available" value={availableVehicles} icon={<ShieldCheck className="h-5 w-5" />} tone="green" />
+        <SummaryCard label="On Trip" value={onTripVehicles} icon={<Route className="h-5 w-5" />} tone="blue" />
+        <SummaryCard label="In Shop" value={inShopVehicles} icon={<Wrench className="h-5 w-5" />} tone="amber" />
       </div>
 
       <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">
@@ -114,7 +172,7 @@ export default function VehiclesPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {vehicles.map((vehicle) => (
+            {filtered.map((vehicle) => (
               <tr key={vehicle.id} className="transition-colors hover:bg-slate-50/80">
                 <td className="px-4 py-4 font-semibold text-slate-950 sm:px-6">{vehicle.registrationNumber}</td>
                 <td className="py-4 text-slate-700">{vehicle.nameModel}</td>
@@ -125,6 +183,13 @@ export default function VehiclesPage() {
                 <td className="py-4"><StatusBadge status={vehicle.status} /></td>
               </tr>
             ))}
+            {filtered.length === 0 && (
+              <tr>
+                <td colSpan={7} className="px-6 py-12 text-center text-sm text-slate-500">
+                  {search || statusFilter !== "All" ? "No vehicles match your search or filter." : "No vehicles yet."}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

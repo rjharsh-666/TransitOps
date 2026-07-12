@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, Fuel, Gauge, Search, TrendingDown, TrendingUp } from "lucide-react";
-import { downloadCsv } from "@/lib/csv";
+import { Fuel, Gauge, Search, TrendingDown, TrendingUp, X } from "lucide-react";
 
 type ReportRow = {
   vehicleId: number;
@@ -105,6 +104,7 @@ function MetricSpark({ label, subtitle, tone = "blue", accent = false }: { label
 
 export default function ReportsPage() {
   const [rows, setRows] = useState<ReportRow[]>([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     void (async () => {
@@ -125,22 +125,21 @@ export default function ReportsPage() {
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">Executive overview of fleet performance and financial health.</h1>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex h-11 w-full min-w-[240px] max-w-sm items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm sm:w-auto">
-            <Search className="h-4 w-4" />
-            <span className="text-sm">Search reports, metrics...</span>
+          <div className="relative flex h-11 w-full min-w-[240px] max-w-sm items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm sm:w-auto">
+            <Search className="h-4 w-4 shrink-0" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search reports, metrics..."
+              className="flex-1 border-0 bg-transparent text-sm text-slate-950 placeholder:text-slate-400 outline-none"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="shrink-0 text-slate-400 hover:text-slate-700">
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => downloadCsv("transitops-report.csv", rows)}
-            className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
-          >
-            <Download className="h-4 w-4" />
-            Export CSV
-          </button>
-          <button className="inline-flex h-11 items-center gap-2 rounded-full bg-blue-600 px-4 text-sm font-medium text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.85)] transition hover:bg-blue-500">
-            <Download className="h-4 w-4" />
-            Download PDF
-          </button>
         </div>
       </div>
 
@@ -179,7 +178,13 @@ export default function ReportsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {rows.map((row) => (
+            {rows
+            .filter(
+              (row) =>
+                !search ||
+                row.registrationNumber.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((row) => (
               <tr key={row.vehicleId} className="transition-colors hover:bg-slate-50/80">
                 <td className="px-4 py-4 font-semibold text-slate-950 sm:px-6">{row.registrationNumber}</td>
                 <td className="py-4 text-slate-700">Fleet Unit</td>

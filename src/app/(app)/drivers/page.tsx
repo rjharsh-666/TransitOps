@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { StatusBadge } from "@/components/status-badge";
 import { DriverFormDialog } from "@/components/driver-form-dialog";
 import { KpiCard } from "@/components/kpi-card";
-import { AlertCircle, Search } from "lucide-react";
+import { AlertCircle, Search, X } from "lucide-react";
 
 type Driver = {
   id: number;
@@ -95,15 +95,20 @@ export default function DriversPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2">
-        <Search className="h-5 w-5 text-slate-400" />
+      <div className="relative flex h-11 w-full max-w-md items-center gap-3 rounded-full border border-slate-200 bg-white px-4 text-slate-400 shadow-sm">
+        <Search className="h-4 w-4 shrink-0" />
         <input
           type="text"
           placeholder="Search drivers, licenses..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full flex-1 border-0 bg-transparent py-2 text-slate-950 placeholder-slate-400 outline-none"
+          className="flex-1 border-0 bg-transparent text-sm text-slate-950 placeholder:text-slate-400 outline-none"
         />
+        {searchTerm && (
+          <button onClick={() => setSearchTerm("")} className="shrink-0 text-slate-400 hover:text-slate-700">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Driver Cards Grid */}
