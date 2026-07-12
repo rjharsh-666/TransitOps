@@ -10,6 +10,7 @@ export async function GET() {
     assertRole(session.role, ["Admin", "FleetManager"]);
 
     const applications = await prisma.driverApplication.findMany({
+      where: { status: "Pending" },
       orderBy: { createdAt: "desc" },
       include: {
         user: { select: { id: true, email: true, name: true, role: true, signupType: true, signupStatus: true } },

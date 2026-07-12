@@ -227,10 +227,14 @@ export default function AdminPage() {
                     <td>{application.hasHeavyVehiclePermit ? "Yes" : "No"}</td>
                     <td>{application.status}</td>
                     <td>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={() => reviewDriverApplication(application.id, "approve")} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-500">Approve</button>
-                        <button type="button" onClick={() => reviewDriverApplication(application.id, "deny")} className="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white hover:bg-rose-500">Deny</button>
-                      </div>
+                      {application.status === "Pending" ? (
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => reviewDriverApplication(application.id, "approve")} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-500">Approve</button>
+                          <button type="button" onClick={() => reviewDriverApplication(application.id, "deny")} className="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white hover:bg-rose-500">Deny</button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-500">—</span>
+                      )}
                     </td>
                   </tr>
                 ))
@@ -270,23 +274,31 @@ export default function AdminPage() {
                     <td>{request.requestedRole}</td>
                     <td>{request.status}</td>
                     <td>
-                      <select
-                        value={selectedRoles[request.id] ?? "FleetManager"}
-                        onChange={(event) => setSelectedRoles((current) => ({ ...current, [request.id]: event.target.value as Exclude<Role, "Pending"> }))}
-                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                      >
-                        {FINAL_ROLES.map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                      </select>
+                      {request.status === "Pending" ? (
+                        <select
+                          value={selectedRoles[request.id] ?? "FleetManager"}
+                          onChange={(event) => setSelectedRoles((current) => ({ ...current, [request.id]: event.target.value as Exclude<Role, "Pending"> }))}
+                          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
+                        >
+                          {FINAL_ROLES.map((role) => (
+                            <option key={role} value={role}>
+                              {role}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <span className="text-xs text-slate-500">—</span>
+                      )}
                     </td>
                     <td>
-                      <div className="flex gap-2">
-                        <button type="button" onClick={() => reviewRoleRequest(request.id, "approve")} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-500">Approve</button>
-                        <button type="button" onClick={() => reviewRoleRequest(request.id, "deny")} className="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white hover:bg-rose-500">Deny</button>
-                      </div>
+                      {request.status === "Pending" ? (
+                        <div className="flex gap-2">
+                          <button type="button" onClick={() => reviewRoleRequest(request.id, "approve")} className="rounded-full bg-emerald-600 px-3 py-2 text-xs font-medium text-white hover:bg-emerald-500">Approve</button>
+                          <button type="button" onClick={() => reviewRoleRequest(request.id, "deny")} className="rounded-full bg-rose-600 px-3 py-2 text-xs font-medium text-white hover:bg-rose-500">Deny</button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-500">—</span>
+                      )}
                     </td>
                   </tr>
                 ))
