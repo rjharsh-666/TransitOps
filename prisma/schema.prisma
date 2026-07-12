@@ -1,14 +1,8 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-// Dummy model so the client generates successfully
-model User {
-  id    String @id @default(uuid())
-  email String @unique
-  name  String?
+generator client {
+  provider = "prisma-client-js"
 }
