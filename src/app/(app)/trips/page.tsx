@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Clock3, Filter, Plus, Search, ShieldCheck, Truck, Waypoints, X } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
-import { TripCompleteDialog } from "@/components/trip-complete-dialog";
 import { TripFormDialog } from "@/components/trip-form-dialog";
 
 type Trip = {
@@ -171,7 +170,9 @@ export default function TripsPage() {
                       </button>
                     ) : null}
                     {trip.status === "Dispatched" ? (
-                      <TripCompleteDialog tripId={trip.id} onCompleted={load} />
+                      <button type="button" onClick={() => transition(trip.id, "complete")} className="rounded-full border border-emerald-200 bg-white px-3 py-1 text-xs font-medium text-emerald-700 shadow-sm transition hover:bg-emerald-50">
+                        Complete
+                      </button>
                     ) : null}
                     {trip.status === "Dispatched" ? (
                       <button type="button" onClick={() => transition(trip.id, "cancel")} className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 shadow-sm transition hover:bg-red-50">

@@ -21,7 +21,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     } else {
       assertRole(session.role, ["Admin", "FleetManager"]);
     }
-    const body = await req.json();
+    let body: any = {};
+    try {
+      body = await req.json();
+    } catch (e) {
+      // Empty or invalid body is allowed
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const trip = await tx.trip.findUnique({ where: { id: tripId } });
