@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const body = await req.json();
     const vehicle = await prisma.vehicle.create({

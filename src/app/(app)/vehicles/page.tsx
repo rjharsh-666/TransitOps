@@ -1,5 +1,6 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { Filter, Search, ShieldCheck, Truck, Wrench, Route } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
@@ -50,7 +51,10 @@ function SummaryCard({
 }
 
 export default function VehiclesPage() {
+  const { isLoaded, user } = useUser();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const role = user?.publicMetadata?.role as string | undefined;
+  const canCreateVehicle = isLoaded && (role === "Admin" || role === "FleetManager");
 
   async function load() {
     const response = await fetch("/api/vehicles");
@@ -85,7 +89,7 @@ export default function VehiclesPage() {
             <Filter className="h-4 w-4" />
             Filter
           </button>
-          <VehicleFormDialog onCreated={load} />
+          {canCreateVehicle ? <VehicleFormDialog onCreated={load} /> : null}
         </div>
       </div>
 

@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
 import { ArrowRight, Bell, Download, MoonStar, Plus, Search, Truck, Users, Wrench } from "lucide-react";
 
 type Kpis = {
@@ -61,9 +63,12 @@ function Badge({ children, tone = "neutral" }: { children: React.ReactNode; tone
 }
 
 export default function DashboardPage() {
+  const { isLoaded, user } = useUser();
   const [kpis, setKpis] = useState<Kpis | null>(null);
   const [dispatches, setDispatches] = useState<any[]>([]);
   const [actionItems, setActionItems] = useState<any[]>([]);
+  const role = user?.publicMetadata?.role as string | undefined;
+  const canCreateVehicle = isLoaded && (role === "Admin" || role === "FleetManager");
 
   useEffect(() => {
     async function loadDashboardData() {
@@ -136,10 +141,15 @@ export default function DashboardPage() {
             <Download className="h-4 w-4" />
             Export
           </button>
-          <button className="inline-flex h-11 items-center gap-2 rounded-full bg-blue-600 px-4 text-sm font-medium text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.85)] transition hover:bg-blue-500">
-            <Plus className="h-4 w-4" />
-            Add Vehicle
-          </button>
+          {canCreateVehicle ? (
+            <Link
+              href="/vehicles/add"
+              className="inline-flex h-11 items-center gap-2 rounded-full bg-blue-600 px-4 text-sm font-medium text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.85)] transition hover:bg-blue-500"
+            >
+              <Plus className="h-4 w-4" />
+              Add Vehicle
+            </Link>
+          ) : null}
         </div>
       </div>
 
