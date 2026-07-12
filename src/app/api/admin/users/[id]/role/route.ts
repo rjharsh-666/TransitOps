@@ -20,7 +20,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     const client = await clerkClient();
     await client.users.updateUserMetadata(id, {
-      publicMetadata: { role },
+      publicMetadata: {
+        role,
+        signupStatus: role === "Pending" ? "Pending" : "Approved",
+        requestedRole: role === "Pending" ? undefined : role,
+      },
     });
 
     const clerkUser = await client.users.getUser(id);
@@ -29,8 +33,21 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     await prisma.user.upsert({
       where: { id },
-      create: { id, email, name, role },
-      update: { email, name, role },
+      create: {
+        id,
+        email,
+        name,
+        role,
+        signupStatus: role === "Pending" ? "Pending" : "Approved",
+        requestedRole: role === "Pending" ? null : role,
+      },
+      update: {
+        email,
+        name,
+        role,
+        signupStatus: role === "Pending" ? "Pending" : "Approved",
+        requestedRole: role === "Pending" ? null : role,
+      },
     });
 
     return NextResponse.json({ ok: true, role });

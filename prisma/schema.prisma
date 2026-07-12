@@ -8,6 +8,12 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum ApprovalStatus {
+  Pending
+  Approved
+  Denied
+}
+
 enum VehicleStatus {
   Available
   OnTrip
@@ -35,14 +41,55 @@ enum MaintenanceStatus {
 }
 
 model User {
-  id           String   @id
-  email        String   @unique
-  name         String?
-  role         String   @default("Driver")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  createdTrips Trip[]   @relation("TripCreatedBy")
-  driver       Driver?
+  id                        String               @id
+  email                     String               @unique
+  name                      String?
+  role                      String               @default("Pending")
+  signupType                String?
+  signupStatus              ApprovalStatus       @default(Pending)
+  requestedRole             String?
+  createdAt                 DateTime             @default(now())
+  updatedAt                 DateTime             @updatedAt
+  createdTrips              Trip[]               @relation("TripCreatedBy")
+  driver                    Driver?
+  driverApplicationsSubmitted DriverApplication[] @relation("DriverApplicationSubmittedBy")
+  reviewedDriverApplications DriverApplication[] @relation("DriverApplicationsReviewedBy")
+  roleRequestsSubmitted     RoleRequest[]        @relation("RoleRequestSubmittedBy")
+  reviewedRoleRequests      RoleRequest[]        @relation("RoleRequestsReviewedBy")
+}
+
+model DriverApplication {
+  id                   Int            @id @default(autoincrement())
+  userId               String         @unique
+  user                 User           @relation("DriverApplicationSubmittedBy", fields: [userId], references: [id], onDelete: Cascade)
+  hasHeavyVehiclePermit Boolean
+  yearsExperience      Int
+  licenseNumber        String
+  licenseCategory      String
+  licenseExpiryDate    DateTime
+  contactNumber        String
+  status               ApprovalStatus @default(Pending)
+  reviewedById         String?
+  reviewedBy           User?          @relation("DriverApplicationsReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt           DateTime?
+  reviewNotes          String?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+}
+
+model RoleRequest {
+  id            Int            @id @default(autoincrement())
+  userId        String         @unique
+  user          User           @relation("RoleRequestSubmittedBy", fields: [userId], references: [id], onDelete: Cascade)
+  requestedRole String
+  status        ApprovalStatus @default(Pending)
+  reviewedById  String?
+  reviewedBy    User?          @relation("RoleRequestsReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt    DateTime?
+  reviewNotes   String?
+  approvedRole  String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model Vehicle {
@@ -72,6 +119,8 @@ model Driver {
   licenseCategory   String
   licenseExpiryDate DateTime
   contactNumber     String
+  hasHeavyVehiclePermit Boolean   @default(false)
+  yearsExperience   Int           @default(0)
   status            DriverStatus  @default(Available)
   createdAt         DateTime      @default(now())
   updatedAt         DateTime      @updatedAt

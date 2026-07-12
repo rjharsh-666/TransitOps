@@ -19,16 +19,16 @@ async function main() {
   await prisma.user.deleteMany();
 
   const fleetManager = await prisma.user.create({
-    data: { id: CLERK_IDS.fleetManager, email: "fleet@transitops.dev", name: "Faye Fleet", role: "FleetManager" },
+    data: { id: CLERK_IDS.fleetManager, email: "fleet@transitops.dev", name: "Faye Fleet", role: "FleetManager", signupType: "OtherUser", signupStatus: "Approved" },
   });
   await prisma.user.create({
-    data: { id: CLERK_IDS.driver, email: "driver@transitops.dev", name: "Alex Driver", role: "Driver" },
+    data: { id: CLERK_IDS.driver, email: "driver@transitops.dev", name: "Alex Driver", role: "Driver", signupType: "Driver", signupStatus: "Approved" },
   });
   await prisma.user.create({
-    data: { id: CLERK_IDS.safetyOfficer, email: "safety@transitops.dev", name: "Sam Safety", role: "SafetyOfficer" },
+    data: { id: CLERK_IDS.safetyOfficer, email: "safety@transitops.dev", name: "Sam Safety", role: "SafetyOfficer", signupType: "OtherUser", signupStatus: "Approved" },
   });
   await prisma.user.create({
-    data: { id: CLERK_IDS.financialAnalyst, email: "fin@transitops.dev", name: "Fin Analyst", role: "FinancialAnalyst" },
+    data: { id: CLERK_IDS.financialAnalyst, email: "fin@transitops.dev", name: "Fin Analyst", role: "FinancialAnalyst", signupType: "OtherUser", signupStatus: "Approved" },
   });
 
   const van05 = await prisma.vehicle.create({
@@ -95,6 +95,8 @@ async function main() {
       licenseCategory: "B",
       licenseExpiryDate: new Date("2027-01-01"),
       contactNumber: "555-0100",
+      hasHeavyVehiclePermit: true,
+      yearsExperience: 7,
       status: DriverStatus.Available,
     },
   });
@@ -105,6 +107,8 @@ async function main() {
       licenseCategory: "C",
       licenseExpiryDate: new Date("2024-06-01"),
       contactNumber: "555-0101",
+      hasHeavyVehiclePermit: true,
+      yearsExperience: 4,
       status: DriverStatus.Available,
     },
   });
@@ -115,6 +119,8 @@ async function main() {
       licenseCategory: "B",
       licenseExpiryDate: new Date("2027-01-01"),
       contactNumber: "555-0102",
+      hasHeavyVehiclePermit: false,
+      yearsExperience: 3,
       status: DriverStatus.Suspended,
     },
   });
@@ -125,6 +131,8 @@ async function main() {
       licenseCategory: "C",
       licenseExpiryDate: new Date("2027-06-01"),
       contactNumber: "555-0103",
+      hasHeavyVehiclePermit: true,
+      yearsExperience: 6,
       status: DriverStatus.Available,
     },
   });

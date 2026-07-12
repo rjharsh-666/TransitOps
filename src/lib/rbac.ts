@@ -1,4 +1,4 @@
-export type Role = "Admin" | "FleetManager" | "Driver" | "SafetyOfficer" | "FinancialAnalyst";
+export type Role = "Pending" | "Admin" | "FleetManager" | "Driver" | "SafetyOfficer" | "FinancialAnalyst";
 
 export const PAGE_ACCESS: Record<string, Role[]> = {
   "/dashboard": ["Admin", "FleetManager", "Driver", "SafetyOfficer", "FinancialAnalyst"],
