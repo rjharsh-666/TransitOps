@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useClerk } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 type DriverApplication = {
   status: "Pending" | "Approved" | "Denied";
@@ -15,12 +17,19 @@ type DriverApplication = {
 export default function DriverAwaitingApprovalPage() {
   const [application, setApplication] = useState<DriverApplication | null>(null);
   const [loading, setLoading] = useState(true);
+  const { signOut } = useClerk();
 
   useEffect(() => {
     async function load() {
       const response = await fetch("/api/driver-applications/mine");
       const payload = await response.json();
-      setApplication(response.ok ? payload : null);
+      if (response.ok && payload) {
+        if (payload.status === "Approved") {
+          window.location.href = "/dashboard";
+          return;
+        }
+        setApplication(payload);
+      }
       setLoading(false);
     }
 
@@ -29,7 +38,7 @@ export default function DriverAwaitingApprovalPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.1),_transparent_45%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] px-6">
-      <section className="max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl shadow-slate-200/70">
+      <section className="w-full max-w-2xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-2xl shadow-slate-200/70">
         <p className="text-sm font-medium uppercase tracking-[0.3em] text-slate-500">TransitOps</p>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">Driver application received</h1>
         <p className="mt-3 text-sm leading-6 text-slate-600">Your account is pending approval. The fleet team will review your license and experience details before activating driver access.</p>
@@ -49,6 +58,12 @@ export default function DriverAwaitingApprovalPage() {
           ) : (
             <p>No driver application was found yet. Refresh after sign-up or contact admin if this looks wrong.</p>
           )}
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3">
+          <Button variant="outline" onClick={() => signOut({ redirectUrl: "/" })}>
+            Sign out
+          </Button>
         </div>
       </section>
     </main>

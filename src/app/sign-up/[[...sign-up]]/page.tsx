@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 type AccountType = "Driver" | "OtherUser";
 
@@ -155,11 +157,28 @@ export default function SignUpPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(15,23,42,0.08),_transparent_45%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] px-6 py-12 text-slate-950">
+    <main className="relative min-h-screen bg-[radial-gradient(ellipse_at_top,_rgba(99,102,241,0.06),_transparent_60%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] px-6 py-12 pt-24 text-slate-950">
+      {/* Back button */}
+      <Link
+        href="/"
+        className="absolute left-6 top-6 inline-flex h-10 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+      >
+        <ArrowLeft className="size-4" />
+        Back
+      </Link>
       <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="rounded-[2rem] border border-slate-200 bg-white/85 p-8 shadow-2xl shadow-slate-200/60 backdrop-blur">
-          <p className="text-sm font-medium uppercase tracking-[0.3em] text-slate-500">TransitOps</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">Create your access path</h1>
+        <section className="rounded-[2rem] border border-slate-200/80 bg-white/80 p-8 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.2)] backdrop-blur">
+          {/* Logo */}
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-950">
+              <svg className="h-4 w-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="text-base font-semibold tracking-tight text-slate-950">TransitOps</span>
+          </div>
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">New account</p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-slate-950">Create your access path</h1>
           <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600">
             Choose whether you are joining as a driver or another user. Drivers submit license and experience details now. Other users continue to a role request page after registration.
           </p>
@@ -184,7 +203,7 @@ export default function SignUpPage() {
           </div>
         </section>
 
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/60">
+        <section className="rounded-[2rem] border border-slate-200/80 bg-white/80 p-8 shadow-[0_24px_80px_-24px_rgba(15,23,42,0.2)] backdrop-blur">
           {!verificationStep ? (
             <div className="space-y-5">
               <div className="grid gap-4 md:grid-cols-2">

@@ -9,7 +9,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (userId) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (user?.role === "Pending") {
-      redirect(user.signupType === "Driver" ? "/driver-awaiting-approval" : "/role-request");
+      if (user.signupType === "Driver") {
+        redirect("/driver-awaiting-approval");
+      } else {
+        const roleRequest = await prisma.roleRequest.findUnique({ where: { userId } });
+        if (roleRequest && roleRequest.status === "Pending") {
+          redirect("/role-awaiting-approval");
+        } else {
+          redirect("/role-request");
+        }
+      }
     }
   }
 

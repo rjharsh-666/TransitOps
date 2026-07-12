@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { handleApiError } from "@/lib/api-helpers";
 
-const FINAL_ROLES = ["Admin", "FleetManager", "Driver", "SafetyOfficer", "FinancialAnalyst"] as const;
+const FINAL_ROLES = ["Admin", "FleetManager", "SafetyOfficer", "FinancialAnalyst"] as const;
 
 export async function POST(req: Request) {
   try {

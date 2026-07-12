@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
-const FINAL_ROLES = ["Admin", "FleetManager", "Driver", "SafetyOfficer", "FinancialAnalyst"] as const;
+const FINAL_ROLES = ["Admin", "FleetManager", "SafetyOfficer", "FinancialAnalyst"] as const;
 
 type RoleRequest = {
   status: "Pending" | "Approved" | "Denied";
@@ -15,6 +16,7 @@ type RoleRequest = {
 };
 
 export default function RoleRequestPage() {
+  const router = useRouter();
   const [requestedRole, setRequestedRole] = useState<(typeof FINAL_ROLES)[number]>("FleetManager");
   const [notes, setNotes] = useState("");
   const [request, setRequest] = useState<RoleRequest | null>(null);
@@ -26,14 +28,23 @@ export default function RoleRequestPage() {
       const response = await fetch("/api/role-requests/mine");
       const payload = await response.json();
       setRequest(response.ok ? payload : null);
-      if (response.ok && payload?.requestedRole) {
-        setRequestedRole(payload.requestedRole);
+      if (response.ok && payload) {
+        if (payload.status === "Approved") {
+          window.location.href = "/dashboard";
+          return;
+        } else if (payload.status === "Pending") {
+          router.push("/role-awaiting-approval");
+          return;
+        }
+        if (payload.requestedRole && FINAL_ROLES.includes(payload.requestedRole as any)) {
+          setRequestedRole(payload.requestedRole as (typeof FINAL_ROLES)[number]);
+        }
       }
       setLoading(false);
     }
 
     void load();
-  }, []);
+  }, [router]);
 
   async function submitRequest() {
     setSaving(true);
@@ -50,6 +61,7 @@ export default function RoleRequestPage() {
 
       setRequest(payload);
       toast.success("Role request sent");
+      router.push("/role-awaiting-approval");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to submit request");
     } finally {
