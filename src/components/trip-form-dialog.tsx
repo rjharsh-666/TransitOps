@@ -25,7 +25,7 @@ export function TripFormDialog({ onCreated }: { onCreated: () => Promise<void> |
         <input name="vehicleId" type="number" placeholder="Vehicle ID" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="driverId" type="number" placeholder="Driver ID" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="cargoWeight" type="number" step="0.01" placeholder="Cargo weight" className="rounded-xl border border-slate-200 px-3 py-2" required />
-        <input name="plannedDistance" type="number" step="0.01" placeholder="Planned distance" className="rounded-xl border border-slate-200 px-3 py-2" required />
+        <input name="plannedDistance" type="number" step="0.01" placeholder="Planned distance (km)" className="rounded-xl border border-slate-200 px-3 py-2" required />
       </div>
     </FormDialog>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Clock3, DollarSign, Filter, Search, ShieldCheck, Wrench } from "lucide-react";
+import { Clock3, Filter, IndianRupee, Search, ShieldCheck, Wrench } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { MaintenanceFormDialog } from "@/components/maintenance-form-dialog";
 
@@ -79,7 +79,7 @@ export default function MaintenancePage() {
         <SummaryCard label="Scheduled" value={String(openLogs)} detail="Open service items" icon={<Wrench className="h-5 w-5" />} />
         <SummaryCard label="In Progress" value={String(activeLogs - openLogs)} detail="Active repairs" icon={<Clock3 className="h-5 w-5" />} tone="blue" />
         <SummaryCard label="Completed" value={String(closedLogs)} detail="Closed service logs" icon={<ShieldCheck className="h-5 w-5" />} tone="green" />
-        <SummaryCard label="Estimated Cost" value={`$${totalCost.toLocaleString()}`} detail="Across all records" icon={<DollarSign className="h-5 w-5" />} tone="amber" />
+        <SummaryCard label="Estimated Cost" value={`₹${totalCost.toLocaleString("en-IN")}`} detail="Across all records" icon={<IndianRupee className="h-5 w-5" />} tone="amber" />
       </div>
 
       <div className="mt-6 overflow-hidden rounded-3xl border border-slate-200/80 bg-white/95 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">

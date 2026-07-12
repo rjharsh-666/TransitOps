@@ -23,7 +23,7 @@ export function ExpenseFormDialog({ onCreated }: { onCreated: () => Promise<void
         <input name="vehicleId" type="number" placeholder="Vehicle ID" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="tripId" type="number" placeholder="Trip ID (optional)" className="rounded-xl border border-slate-200 px-3 py-2" />
         <input name="expenseType" placeholder="Expense type" className="rounded-xl border border-slate-200 px-3 py-2" required />
-        <input name="amount" type="number" step="0.01" placeholder="Amount" className="rounded-xl border border-slate-200 px-3 py-2" required />
+        <input name="amount" type="number" step="0.01" placeholder="Amount (₹)" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="expenseDate" type="date" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <textarea name="description" placeholder="Description" className="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2" rows={3} />
       </div>

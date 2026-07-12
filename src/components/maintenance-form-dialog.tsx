@@ -23,7 +23,7 @@ export function MaintenanceFormDialog({ onCreated }: { onCreated: () => Promise<
         <input name="vehicleId" type="number" placeholder="Vehicle ID" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="maintenanceType" placeholder="Type" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <input name="startDate" type="date" className="rounded-xl border border-slate-200 px-3 py-2" required />
-        <input name="cost" type="number" step="0.01" placeholder="Cost" className="rounded-xl border border-slate-200 px-3 py-2" required />
+        <input name="cost" type="number" step="0.01" placeholder="Cost (₹)" className="rounded-xl border border-slate-200 px-3 py-2" required />
         <textarea name="description" placeholder="Description" className="rounded-xl border border-slate-200 px-3 py-2 sm:col-span-2" rows={3} />
       </div>
     </FormDialog>

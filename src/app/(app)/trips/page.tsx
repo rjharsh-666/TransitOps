@@ -158,7 +158,7 @@ export default function TripsPage() {
             </div>
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-500">Estimated Distance</p>
-              <p className="mt-2 text-lg font-semibold text-slate-950">174 mi</p>
+              <p className="mt-2 text-lg font-semibold text-slate-950">280 km</p>
               <p className="mt-1 text-sm text-slate-500">Latest route profile</p>
             </div>
           </div>

@@ -145,8 +145,8 @@ export default function ReportsPage() {
       </div>
 
       <div className="mt-6 grid gap-4 xl:grid-cols-4">
-        <SummaryCard label="Monthly Revenue" value={`$${(totalRevenue / 1000).toFixed(1)}M`} detail="vs last month" icon={<TrendingUp className="h-5 w-5" />} tone="green" />
-        <SummaryCard label="Operational Cost" value={`$${Math.round(totalCost / 1000)}K`} detail="vs last month" icon={<TrendingDown className="h-5 w-5" />} tone="amber" />
+        <SummaryCard label="Monthly Revenue" value={`₹${(totalRevenue / 100000).toFixed(1)}L`} detail="vs last month" icon={<TrendingUp className="h-5 w-5" />} tone="green" />
+        <SummaryCard label="Operational Cost" value={`₹${Math.round(totalCost / 1000)}K`} detail="vs last month" icon={<TrendingDown className="h-5 w-5" />} tone="amber" />
         <SummaryCard label="Fleet Utilization" value="92%" detail="Target: 90%" icon={<Gauge className="h-5 w-5" />} tone="blue" />
         <SummaryCard label="Avg ROI" value={`${avgRoi > 0 ? "+" : ""}${avgRoi}%`} detail="Across top vehicles" icon={<Fuel className="h-5 w-5" />} />
       </div>
@@ -156,7 +156,7 @@ export default function ReportsPage() {
 
         <div className="grid gap-4">
           <MetricSpark label="Fleet Utilization" subtitle="Active vehicles vs idle" tone="blue" accent />
-          <MetricSpark label="Fuel Efficiency" subtitle="Fleet average (MPG)" tone="green" />
+          <MetricSpark label="Fuel Efficiency" subtitle="Fleet average (km/L)" tone="green" />
         </div>
       </div>
 
@@ -183,8 +183,8 @@ export default function ReportsPage() {
               <tr key={row.vehicleId} className="transition-colors hover:bg-slate-50/80">
                 <td className="px-4 py-4 font-semibold text-slate-950 sm:px-6">{row.registrationNumber}</td>
                 <td className="py-4 text-slate-700">Fleet Unit</td>
-                <td className="py-4 text-slate-700">${row.fuelEfficiency.toFixed(1)}K</td>
-                <td className="py-4 text-slate-700">${row.operationalCost.toLocaleString()}</td>
+                <td className="py-4 text-slate-700">₹{row.fuelEfficiency.toFixed(1)}K</td>
+                <td className="py-4 text-slate-700">₹{row.operationalCost.toLocaleString("en-IN")}</td>
                 <td className={row.roi >= 0 ? "py-4 font-semibold text-emerald-600" : "py-4 font-semibold text-rose-600"}>{row.roi > 0 ? `+${row.roi}%` : `${row.roi}%`}</td>
               </tr>
             ))}

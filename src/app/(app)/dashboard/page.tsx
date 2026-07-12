@@ -17,6 +17,13 @@ type Kpis = {
 const weeklyTrend = [38, 66, 50, 84, 95, 88, 72, 98];
 
 
+<<<<<<< Updated upstream
+=======
+const actionItems = [
+  { title: "Vehicle #402 - Oil Change", detail: "Overdue by 400 km", tone: "urgent" },
+  { title: "Vehicle #118 - Tire Rotation", detail: "Due in 2 days", tone: "warning" },
+];
+>>>>>>> Stashed changes
 
 function StatCard({ label, value, sublabel, accent = false }: { label: string; value: string; sublabel?: string; accent?: boolean }) {
   return (
