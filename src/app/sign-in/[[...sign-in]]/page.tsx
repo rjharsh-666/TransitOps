@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useSignIn } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { useSignIn, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ type View = "sign-in" | "forgot-email" | "forgot-code" | "forgot-new-password";
 
 export default function SignInPage() {
   const { signIn } = useSignIn();
+  const { isSignedIn, user, isLoaded } = useUser();
 
   // Sign-in state
   const [email, setEmail] = useState("");
@@ -25,7 +26,35 @@ export default function SignInPage() {
   const [view, setView] = useState<View>("sign-in");
   const [loading, setLoading] = useState(false);
 
-  if (!signIn) {
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      const role = user.publicMetadata?.role;
+      const signupType = user.publicMetadata?.signupType;
+
+      if (role !== "Pending") {
+        window.location.href = "/dashboard";
+      } else {
+        if (signupType === "Driver") {
+          window.location.href = "/driver-awaiting-approval";
+        } else {
+          fetch("/api/role-requests/mine")
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+              if (data && data.status === "Pending") {
+                window.location.href = "/role-awaiting-approval";
+              } else {
+                window.location.href = "/role-request";
+              }
+            })
+            .catch(() => {
+              window.location.href = "/role-request";
+            });
+        }
+      }
+    }
+  }, [isLoaded, isSignedIn, user]);
+
+  if (!signIn || (isLoaded && isSignedIn)) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_rgba(99,102,241,0.06),_transparent_60%),linear-gradient(180deg,_#f8fafc,_#eef2ff)] text-slate-500">
         Loading…
