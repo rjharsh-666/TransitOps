@@ -17,13 +17,6 @@ type Kpis = {
 const weeklyTrend = [38, 66, 50, 84, 95, 88, 72, 98];
 
 
-<<<<<<< Updated upstream
-=======
-const actionItems = [
-  { title: "Vehicle #402 - Oil Change", detail: "Overdue by 400 km", tone: "urgent" },
-  { title: "Vehicle #118 - Tire Rotation", detail: "Due in 2 days", tone: "warning" },
-];
->>>>>>> Stashed changes
 
 function StatCard({ label, value, sublabel, accent = false }: { label: string; value: string; sublabel?: string; accent?: boolean }) {
   return (
@@ -107,7 +100,7 @@ export default function DashboardPage() {
             .filter((log: any) => log.status === "Open")
             .map((log: any) => ({
               title: `Vehicle #${log.vehicle?.registrationNumber ?? log.vehicleId} - ${log.maintenanceType}`,
-              detail: `${log.description || "Scheduled maintenance"} · Cost: $${Number(log.cost).toFixed(0)}`,
+              detail: `${log.description || "Scheduled maintenance"} · Cost: ₹${Number(log.cost).toFixed(0)}`,
               tone: Number(log.cost) > 200 ? "urgent" : "warning",
             }));
           setActionItems(openMaint.slice(0, 2));
