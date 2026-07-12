@@ -105,108 +105,110 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-        <div className="grid w-full max-w-5xl gap-4 sm:grid-cols-2 xl:grid-cols-4 xl:justify-start">
-          <StatCard
-            label="Fleet Status"
-            value={String(totalVehicles)}
-            sublabel="Total vehicles"
-          />
-          <StatCard
-            label="Active Trips"
-            value={String(kpis?.activeTrips ?? 0)}
-            sublabel={`${kpis?.pendingTrips ?? 0} pending`}
-          />
-          <StatCard
-            label="Maintenance"
-            value={String(kpis?.vehiclesInMaintenance ?? 0)}
-            sublabel="Vehicles in shop"
-          />
-          <StatCard
-            label="Fleet Utilization"
-            value={`${utilization}%`}
-            sublabel="Target: 85%"
-            accent
-          />
-        </div>
+      {/* KPI Cards Row */}
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label="Fleet Status"
+          value={String(totalVehicles)}
+          sublabel="Total vehicles"
+        />
+        <StatCard
+          label="Active Trips"
+          value={String(kpis?.activeTrips ?? 0)}
+          sublabel={`${kpis?.pendingTrips ?? 0} pending`}
+        />
+        <StatCard
+          label="Maintenance"
+          value={String(kpis?.vehiclesInMaintenance ?? 0)}
+          sublabel="Vehicles in shop"
+        />
+        <StatCard
+          label="Fleet Utilization"
+          value={`${utilization}%`}
+          sublabel="Target: 85%"
+          accent
+        />
+      </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-lg font-semibold tracking-tight text-slate-950">Vehicle Status</h2>
-                <p className="mt-1 text-sm text-slate-500">Distribution across active, idle, shop, and offline units.</p>
-              </div>
-              <Badge tone="neutral">Updated now</Badge>
+      {/* Charts Row */}
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        {/* Vehicle Status Card */}
+        <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight text-slate-950">Vehicle Status</h2>
+              <p className="mt-1 text-sm text-slate-500">Distribution across active, idle, shop, and offline units.</p>
             </div>
+            <Badge tone="neutral">Updated now</Badge>
+          </div>
 
-            <div className="mt-6 flex items-center justify-center">
-              <div
-                className="relative flex h-44 w-44 items-center justify-center rounded-full"
-                style={{
-                  background: `conic-gradient(#2563eb 0 ${activeShare}%, #5eead4 ${activeShare}% ${activeShare + idleShare}%, #dc2626 ${activeShare + idleShare}% ${activeShare + idleShare + shopShare}%, #94a3b8 ${activeShare + idleShare + shopShare}% 100%)`,
-                }}
-              >
-                <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner">
-                  <p className="text-3xl font-semibold tracking-tight text-slate-950">{totalVehicles}</p>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">Total</p>
-                </div>
+          <div className="mt-6 flex items-center justify-center">
+            <div
+              className="relative flex h-44 w-44 items-center justify-center rounded-full"
+              style={{
+                background: `conic-gradient(#2563eb 0 ${activeShare}%, #5eead4 ${activeShare}% ${activeShare + idleShare}%, #dc2626 ${activeShare + idleShare}% ${activeShare + idleShare + shopShare}%, #94a3b8 ${activeShare + idleShare + shopShare}% 100%)`,
+              }}
+            >
+              <div className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner">
+                <p className="text-3xl font-semibold tracking-tight text-slate-950">{totalVehicles}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-slate-400">Total</p>
               </div>
-            </div>
-
-            <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-slate-600">
-              <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-blue-600" /> Active ({activeShare}%)</div>
-              <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-emerald-300" /> Idle ({idleShare}%)</div>
-              <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-600" /> Shop ({shopShare}%)</div>
-              <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-slate-400" /> Offline ({offlineShare}%)</div>
             </div>
           </div>
 
-          <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">
-            <div className="flex items-start justify-between gap-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 text-sm text-slate-600">
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-blue-600" /> Active ({activeShare}%)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-emerald-300" /> Idle ({idleShare}%)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-red-600" /> Shop ({shopShare}%)</div>
+            <div className="flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-slate-400" /> Offline ({offlineShare}%)</div>
+          </div>
+        </div>
+
+        {/* Fleet Utilization Card */}
+        <div className="rounded-3xl border border-slate-200/80 bg-white/95 p-5 shadow-[0_16px_50px_-30px_rgba(15,23,42,0.5)]">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight text-slate-950">Fleet Utilization</h2>
+              <p className="mt-1 text-sm text-slate-500">Target coverage and weekly performance trend.</p>
+            </div>
+            <Badge tone="success">Last 30 days</Badge>
+          </div>
+
+          <div className="mt-6 rounded-2xl bg-slate-950 p-5 text-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.8)]">
+            <div className="flex items-end justify-between gap-6">
               <div>
-                <h2 className="text-lg font-semibold tracking-tight text-slate-950">Fleet Utilization</h2>
-                <p className="mt-1 text-sm text-slate-500">Target coverage and weekly performance trend.</p>
+                <p className="text-sm uppercase tracking-[0.35em] text-blue-200/80">Utilization</p>
+                <p className="mt-2 text-5xl font-semibold tracking-tight">{utilization}%</p>
+                <p className="mt-2 text-sm text-slate-300">Target 85% vs current fleet use.</p>
               </div>
-              <Badge tone="success">Last 30 days</Badge>
+              <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-blue-100">On track</div>
             </div>
 
-            <div className="mt-6 rounded-2xl bg-slate-950 p-5 text-white shadow-[0_18px_50px_-28px_rgba(15,23,42,0.8)]">
-              <div className="flex items-end justify-between gap-6">
-                <div>
-                  <p className="text-sm uppercase tracking-[0.35em] text-blue-200/80">Utilization</p>
-                  <p className="mt-2 text-5xl font-semibold tracking-tight">{utilization}%</p>
-                  <p className="mt-2 text-sm text-slate-300">Target 85% vs current fleet use.</p>
+            <div className="mt-6 grid grid-cols-8 items-end gap-3">
+              {weeklyTrend.map((value, index) => (
+                <div key={index} className="flex flex-col items-center gap-2">
+                  <div
+                    className="w-full rounded-t-2xl bg-gradient-to-t from-blue-500 to-cyan-300 shadow-[0_16px_24px_-18px_rgba(96,165,250,0.9)]"
+                    style={{ height: `${value}px` }}
+                  />
+                  <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400">W{index + 1}</span>
                 </div>
-                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-blue-100">On track</div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-8 items-end gap-3">
-                {weeklyTrend.map((value, index) => (
-                  <div key={index} className="flex flex-col items-center gap-2">
-                    <div
-                      className="w-full rounded-t-2xl bg-gradient-to-t from-blue-500 to-cyan-300 shadow-[0_16px_24px_-18px_rgba(96,165,250,0.9)]"
-                      style={{ height: `${value}px` }}
-                    />
-                    <span className="text-[10px] uppercase tracking-[0.18em] text-slate-400">W{index + 1}</span>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
+          </div>
 
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="flex items-center gap-2 text-slate-500"><Users className="h-4 w-4" /> Drivers on duty</div>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.driversOnDuty ?? 0}</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="flex items-center gap-2 text-slate-500"><Wrench className="h-4 w-4" /> Maintenance</div>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.vehiclesInMaintenance ?? 0}</p>
-              </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="flex items-center gap-2 text-slate-500"><MoonStar className="h-4 w-4" /> Pending</div>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.pendingTrips ?? 0}</p>
-              </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center gap-2 text-slate-500 text-xs xl:text-sm font-medium whitespace-nowrap"><Users className="h-4 w-4" /> Drivers on duty</div>
+              <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.driversOnDuty ?? 0}</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center gap-2 text-slate-500 text-xs xl:text-sm font-medium whitespace-nowrap"><Wrench className="h-4 w-4" /> Maintenance</div>
+              <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.vehiclesInMaintenance ?? 0}</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center gap-2 text-slate-500 text-xs xl:text-sm font-medium whitespace-nowrap"><MoonStar className="h-4 w-4" /> Pending</div>
+              <p className="mt-2 text-2xl font-semibold text-slate-950">{kpis?.pendingTrips ?? 0}</p>
             </div>
           </div>
         </div>
