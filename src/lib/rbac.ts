@@ -7,7 +7,8 @@ export const PAGE_ACCESS: Record<string, Role[]> = {
   "/drivers": ["Admin", "FleetManager", "SafetyOfficer"],
   "/trips": ["Admin", "FleetManager", "Driver"],
   "/maintenance": ["Admin", "FleetManager"],
-  "/fuel-expenses": ["Admin", "FleetManager", "FinancialAnalyst"],
+  "/fuels": ["Admin", "FleetManager", "FinancialAnalyst"],
+  "/expenses": ["Admin", "FleetManager", "FinancialAnalyst"],
   "/reports": ["Admin", "FleetManager", "FinancialAnalyst"],
 };
 

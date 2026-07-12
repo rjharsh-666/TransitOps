@@ -12,7 +12,8 @@ const LINKS = [
   { href: "/drivers", label: "Drivers", roles: ["Admin", "FleetManager", "SafetyOfficer"] },
   { href: "/trips", label: "Trips", roles: ["Admin", "FleetManager", "Driver"] },
   { href: "/maintenance", label: "Maintenance", roles: ["Admin", "FleetManager"] },
-  { href: "/fuel-expenses", label: "Fuel & Expenses", roles: ["Admin", "FleetManager", "FinancialAnalyst"] },
+  { href: "/fuels", label: "Fuel Logs", roles: ["Admin", "FleetManager", "FinancialAnalyst"] },
+  { href: "/expenses", label: "Expenses", roles: ["Admin", "FleetManager", "FinancialAnalyst"] },
   { href: "/reports", label: "Reports", roles: ["Admin", "FleetManager", "FinancialAnalyst"] },
 ];
 
