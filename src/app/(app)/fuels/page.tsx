@@ -136,13 +136,13 @@ export default function FuelsPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Total Fuel Spend"
-          value={`$${metrics.totalSpend.toLocaleString()}`}
+          value={`₹${metrics.totalSpend.toLocaleString()}`}
           trend={metrics.trend}
           icon={<Fuel className="h-4 w-4" />}
         />
         <StatCard
           label="Avg. Fuel Price"
-          value={`$${metrics.avgPrice.toFixed(2)}`}
+          value={`₹${metrics.avgPrice.toFixed(2)}`}
           suffix="/L"
           icon={<Zap className="h-4 w-4" />}
         />
@@ -215,7 +215,7 @@ export default function FuelsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-slate-600">{log.liters}</td>
-                    <td className="px-6 py-4 text-slate-600 font-medium">${log.cost}</td>
+                    <td className="px-6 py-4 text-slate-600 font-medium">₹{log.cost}</td>
                     <td className="px-6 py-4 text-slate-600">
                       <span className="text-emerald-600 font-semibold">24.2/100</span>
                     </td>

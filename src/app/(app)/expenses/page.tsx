@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, Download, DollarSign, TrendingUp, Activity, CheckCircle } from "lucide-react";
+import { Search, Download, IndianRupee, TrendingUp, Activity, CheckCircle } from "lucide-react";
 import { ExpenseFormDialog } from "@/components/expense-form-dialog";
 
 type Expense = {
@@ -15,11 +15,11 @@ type Expense = {
 type FinancialMetrics = {
   totalOperatingCost: number;
   fleetROI: number;
-  costPerMile: number;
+  costPerKm: number;
   budgetAdherence: number;
   costTrend: number;
   roiTrend: number;
-  costPerMileTrend: number;
+  costPerKmTrend: number;
 };
 
 function MetricCard({
@@ -89,7 +89,7 @@ function ExpenseCategoryItem({
         <span className="text-sm font-medium text-slate-700">{category}</span>
       </div>
       <div className="text-right">
-        <p className="text-sm font-semibold text-slate-950">${amount.toLocaleString()}</p>
+        <p className="text-sm font-semibold text-slate-950">₹{amount.toLocaleString()}</p>
         <p className="text-xs text-slate-500">{percentage}% of total</p>
       </div>
     </div>
@@ -101,11 +101,11 @@ export default function ExpensesPage() {
   const [metrics, setMetrics] = useState<FinancialMetrics>({
     totalOperatingCost: 142850,
     fleetROI: 24.8,
-    costPerMile: 1.48,
+    costPerKm: 1.48,
     budgetAdherence: 92,
     costTrend: 12.5,
     roiTrend: 2.4,
-    costPerMileTrend: -5.1,
+    costPerKmTrend: -5.1,
   });
 
   async function load() {
@@ -168,8 +168,8 @@ export default function ExpensesPage() {
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           label="Total Operating Cost"
-          value={`$${(metrics.totalOperatingCost / 1000).toFixed(0)}k`}
-          icon={<DollarSign className="h-5 w-5" />}
+          value={`₹${(metrics.totalOperatingCost / 1000).toFixed(0)}k`}
+          icon={<IndianRupee className="h-5 w-5" />}
           trend={metrics.costTrend}
           trendLabel="vs Last Quarter"
         />
@@ -182,18 +182,18 @@ export default function ExpensesPage() {
           trendLabel="Annual average"
         />
         <MetricCard
-          label="Cost Per Mile"
-          value={`$${metrics.costPerMile}`}
+          label="Cost Per Km"
+          value={`₹${metrics.costPerKm}`}
           icon={<Activity className="h-5 w-5" />}
-          trend={metrics.costPerMileTrend}
-          trendLabel="Target: $1.42"
+          trend={metrics.costPerKmTrend}
+          trendLabel="Target: ₹1.42"
         />
         <MetricCard
           label="Budget Adherence"
           value={metrics.budgetAdherence}
           suffix="%"
           icon={<CheckCircle className="h-5 w-5" />}
-          status="$16k remaining"
+          status="₹16k remaining"
         />
       </div>
 
@@ -287,7 +287,7 @@ export default function ExpensesPage() {
                         {expense.expenseType}
                       </span>
                     </td>
-                    <td className="px-6 py-4 font-semibold text-slate-950">${expense.amount}</td>
+                    <td className="px-6 py-4 font-semibold text-slate-950">₹{expense.amount}</td>
                     <td className="px-6 py-4 text-emerald-600 font-semibold">
                       <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700">
                         Recorded
