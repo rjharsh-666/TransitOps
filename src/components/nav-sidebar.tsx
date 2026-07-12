@@ -6,7 +6,7 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/dashboard", label: "Dashboard", roles: ["Admin", "FleetManager", "Driver", "SafetyOfficer", "FinancialAnalyst"] },
+  { href: "/dashboard", label: "Dashboard", roles: ["Admin", "FleetManager", "SafetyOfficer", "FinancialAnalyst"] },
   { href: "/admin", label: "Admin", roles: ["Admin"] },
   { href: "/vehicles", label: "Vehicles", roles: ["Admin", "FleetManager"] },
   { href: "/drivers", label: "Drivers", roles: ["Admin", "FleetManager", "SafetyOfficer"] },
