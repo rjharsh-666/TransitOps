@@ -7,7 +7,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const { id } = await params;
     const logId = Number(id);

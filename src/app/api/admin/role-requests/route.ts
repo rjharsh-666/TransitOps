@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["Admin", "FleetManager"]);
+    assertRole(session.role, ["Admin"]);
 
     const requests = await prisma.roleRequest.findMany({
       where: { status: "Pending" },

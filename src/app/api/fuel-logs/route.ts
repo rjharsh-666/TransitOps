@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    assertRole(session.role, ["Admin", "FleetManager", "FinancialAnalyst"]);
     const { searchParams } = new URL(req.url);
     const vehicleId = searchParams.get("vehicleId");
 
@@ -25,7 +26,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager", "FinancialAnalyst"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const body = await req.json();
     const log = await prisma.fuelLog.create({

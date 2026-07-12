@@ -10,7 +10,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["Admin", "FleetManager"]);
+    assertRole(session.role, ["Admin"]);
 
     const { id } = await params;
     const body = await req.json() as { action?: "approve" | "deny"; reviewNotes?: string };

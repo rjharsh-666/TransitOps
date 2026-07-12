@@ -5,9 +5,21 @@ import { getSessionRole, handleApiError } from "@/lib/api-helpers";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = await getSessionRole();
+    if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const { id } = await params;
     const driver = await prisma.driver.findUnique({ where: { id: Number(id) }, include: { user: true } });
     if (!driver) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+    if (session.role === "Driver") {
+      if (driver.userId !== session.userId) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    } else {
+      assertRole(session.role, ["Admin", "FleetManager", "SafetyOfficer"]);
+    }
+
     return NextResponse.json(driver);
   } catch (err) {
     return handleApiError(err);
@@ -18,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const { id } = await params;
     const body = await req.json();
@@ -39,7 +51,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const { id } = await params;
     await prisma.driver.delete({ where: { id: Number(id) } });

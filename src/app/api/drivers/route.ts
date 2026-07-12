@@ -7,6 +7,7 @@ export async function GET() {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    assertRole(session.role, ["Admin", "FleetManager", "SafetyOfficer"]);
     const drivers = await prisma.driver.findMany({ include: { user: true }, orderBy: { createdAt: "desc" } });
     return NextResponse.json(drivers);
   } catch (err) {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const body = await req.json();
     const driver = await prisma.driver.create({

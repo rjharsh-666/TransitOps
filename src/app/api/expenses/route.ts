@@ -7,6 +7,7 @@ export async function GET() {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    assertRole(session.role, ["Admin", "FinancialAnalyst"]);
     const expenses = await prisma.expense.findMany({ include: { vehicle: true, trip: true }, orderBy: { expenseDate: "desc" } });
     return NextResponse.json(expenses);
   } catch (err) {
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager", "FinancialAnalyst"]);
+    assertRole(session.role, ["Admin", "FinancialAnalyst"]);
 
     const body = await req.json();
     const expense = await prisma.expense.create({

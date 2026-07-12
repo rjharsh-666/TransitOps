@@ -7,10 +7,20 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager", "Driver"]);
 
     const { id } = await params;
     const tripId = Number(id);
+
+    if (session.role === "Driver") {
+      const trip = await prisma.trip.findUnique({ where: { id: tripId } });
+      if (!trip) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      const driverProfile = await prisma.driver.findUnique({ where: { userId: session.userId } });
+      if (!driverProfile || trip.driverId !== driverProfile.id) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
+    } else {
+      assertRole(session.role, ["Admin", "FleetManager"]);
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       const trip = await tx.trip.findUnique({ where: { id: tripId } });

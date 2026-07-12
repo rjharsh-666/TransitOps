@@ -11,8 +11,20 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get("status") ?? undefined;
 
+    let whereClause: any = { ...(status && { status: status as never }) };
+
+    if (session.role === "Driver") {
+      const driver = await prisma.driver.findUnique({ where: { userId: session.userId } });
+      if (!driver) {
+        return NextResponse.json([]);
+      }
+      whereClause.driverId = driver.id;
+    } else {
+      assertRole(session.role, ["Admin", "FleetManager"]);
+    }
+
     const trips = await prisma.trip.findMany({
-      where: { ...(status && { status: status as never }) },
+      where: whereClause,
       include: { vehicle: true, driver: true, createdBy: true },
       orderBy: { createdAt: "desc" },
     });
@@ -27,7 +39,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["FleetManager", "Driver"]);
+    assertRole(session.role, ["Admin", "FleetManager"]);
 
     const body = await req.json();
     const { vehicleId, driverId, cargoWeight, plannedDistance, source, destination } = body;
