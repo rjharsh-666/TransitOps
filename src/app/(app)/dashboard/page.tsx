@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
+
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { Bell, MoonStar, Truck, Users, Wrench } from "lucide-react";
+import { ArrowRight, Bell, MoonStar, Truck, Users, Wrench } from "lucide-react";
 
 type Kpis = {
   activeVehicles: number;

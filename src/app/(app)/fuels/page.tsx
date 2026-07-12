@@ -83,7 +83,7 @@ export default function FuelsPage() {
   async function load() {
     const fuelResponse = await fetch("/api/fuel-logs");
     const logs = await fuelResponse.json();
-    setFuelLogs(logs);
+    setFuelLogs(Array.isArray(logs) ? logs : []);
 
     // Calculate metrics
     if (Array.isArray(logs) && logs.length > 0) {

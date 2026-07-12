@@ -22,7 +22,8 @@ export default function DriversPage() {
 
   async function load() {
     const response = await fetch("/api/drivers");
-    setDrivers(await response.json());
+    const data = await response.json();
+    setDrivers(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {

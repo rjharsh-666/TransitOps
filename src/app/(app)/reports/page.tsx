@@ -109,7 +109,8 @@ export default function ReportsPage() {
   useEffect(() => {
     void (async () => {
       const response = await fetch("/api/reports");
-      setRows(await response.json());
+      const data = await response.json();
+      setRows(Array.isArray(data) ? data : []);
     })();
   }, []);
 

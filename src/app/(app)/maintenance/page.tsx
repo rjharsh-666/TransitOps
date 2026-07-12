@@ -48,7 +48,8 @@ export default function MaintenancePage() {
 
   async function load() {
     const response = await fetch("/api/maintenance");
-    setLogs(await response.json());
+    const data = await response.json();
+    setLogs(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {

@@ -65,7 +65,8 @@ export default function VehiclesPage() {
 
   async function load() {
     const response = await fetch("/api/vehicles");
-    setVehicles(await response.json());
+    const data = await response.json();
+    setVehicles(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {

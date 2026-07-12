@@ -48,7 +48,8 @@ export default function TripsPage() {
 
   async function load() {
     const response = await fetch("/api/trips");
-    setTrips(await response.json());
+    const data = await response.json();
+    setTrips(Array.isArray(data) ? data : []);
   }
 
   useEffect(() => {

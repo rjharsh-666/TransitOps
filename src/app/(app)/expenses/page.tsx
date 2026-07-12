@@ -112,11 +112,11 @@ export default function ExpensesPage() {
   async function load() {
     const expenseResponse = await fetch("/api/expenses");
     const expenseData = await expenseResponse.json();
-    setExpenses(expenseData);
+    setExpenses(Array.isArray(expenseData) ? expenseData : []);
 
     // Calculate metrics from expenses
     if (Array.isArray(expenseData) && expenseData.length > 0) {
-      const totalCost = expenseData.reduce((sum, exp) => sum + parseFloat(exp.amount || 0), 0);
+      const totalCost = expenseData.reduce((sum, exp) => sum + parseFloat(String(exp.amount || 0)), 0);
       setMetrics((prev) => ({
         ...prev,
         totalOperatingCost: totalCost,
@@ -133,7 +133,7 @@ export default function ExpensesPage() {
     (acc, exp) => {
       const type = exp.expenseType || "Other";
       if (!acc[type]) acc[type] = 0;
-      acc[type] += parseFloat(exp.amount || 0);
+      acc[type] += parseFloat(String(exp.amount || 0));
       return acc;
     },
     {} as Record<string, number>
