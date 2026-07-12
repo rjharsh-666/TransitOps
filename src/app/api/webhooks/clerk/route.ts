@@ -36,12 +36,14 @@ export async function POST(req: Request) {
     const data = event.data;
     const email = data.email_addresses?.[0]?.email_address ?? "";
     const name = [data.first_name, data.last_name].filter(Boolean).join(" ") || email;
-    const role = (data.public_metadata?.role as Role | undefined) ?? "Driver";
+    const role = (data.public_metadata?.role as Role | undefined) ?? "Pending";
+    const signupType = (data.public_metadata?.signupType as string | undefined) ?? null;
+    const signupStatus = role === "Pending" ? "Pending" : "Approved";
 
     await prisma.user.upsert({
       where: { id: data.id },
-      create: { id: data.id, email, name, role },
-      update: { email, name, role },
+      create: { id: data.id, email, name, role, signupType, signupStatus },
+      update: { email, name, role, signupType, signupStatus },
     });
   }
 

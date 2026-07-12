@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import type { Role } from "@/lib/rbac";
 
-const ADMIN_BOOTSTRAP_EMAILS = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "rajharsh437@gmail.com")
+export const ADMIN_BOOTSTRAP_EMAILS = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "rajharsh437@gmail.com")
   .split(",")
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
