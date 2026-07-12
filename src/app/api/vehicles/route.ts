@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["Admin", "FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager", "FinancialAnalyst", "SafetyOfficer"]);
 
     const { searchParams } = new URL(req.url);
     const type = searchParams.get("type") ?? undefined;

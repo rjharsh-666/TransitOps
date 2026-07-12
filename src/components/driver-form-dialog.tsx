@@ -61,6 +61,11 @@ export function DriverFormDialog({ onCreated }: { onCreated: () => Promise<void>
           <FieldInput name="yearsExperience" type="number" min="0" max="50" placeholder="e.g. 5" />
         </div>
 
+        <div className="sm:col-span-2">
+          <FieldLabel>Clerk User ID (optional)</FieldLabel>
+          <FieldInput name="userId" placeholder="e.g. user_..." />
+        </div>
+
         <div className="sm:col-span-2 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
           <input type="checkbox" name="hasHeavyVehiclePermit" value="true" id="hvp-check" className="h-4 w-4 rounded accent-slate-950" />
           <label htmlFor="hvp-check" className="text-sm text-slate-700 cursor-pointer">

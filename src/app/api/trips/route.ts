@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       }
       whereClause.driverId = driver.id;
     } else {
-      assertRole(session.role, ["Admin", "FleetManager"]);
+      assertRole(session.role, ["Admin", "FleetManager", "FinancialAnalyst", "SafetyOfficer"]);
     }
 
     const trips = await prisma.trip.findMany({

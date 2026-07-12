@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const session = await getSessionRole();
     if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    assertRole(session.role, ["Admin", "FleetManager"]);
+    assertRole(session.role, ["Admin", "FleetManager", "FinancialAnalyst", "SafetyOfficer"]);
     const logs = await prisma.maintenanceLog.findMany({ include: { vehicle: true }, orderBy: { createdAt: "desc" } });
     return NextResponse.json(logs);
   } catch (err) {
