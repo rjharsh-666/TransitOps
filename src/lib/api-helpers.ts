@@ -26,15 +26,15 @@ export async function getSessionRole(): Promise<{ userId: string; role: Role } |
   const clerkUser = await client.users.getUser(userId);
   const clerkEmail = clerkUser.emailAddresses[0]?.emailAddress?.toLowerCase() ?? "";
   const bootstrapAdmin = ADMIN_BOOTSTRAP_EMAILS.includes(clerkEmail);
-  const clerkRole = (clerkUser.publicMetadata?.role as Role | undefined) ?? (bootstrapAdmin ? "FleetManager" : undefined);
+  const clerkRole = (clerkUser.publicMetadata?.role as Role | undefined) ?? (bootstrapAdmin ? "Admin" : undefined);
   if (!clerkRole) return null;
 
   const email = clerkUser.emailAddresses[0]?.emailAddress ?? "";
   const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || email;
 
-  if (bootstrapAdmin && clerkUser.publicMetadata?.role !== "FleetManager") {
+  if (bootstrapAdmin && clerkUser.publicMetadata?.role !== "Admin") {
     await client.users.updateUserMetadata(userId, {
-      publicMetadata: { role: "FleetManager" },
+      publicMetadata: { role: "Admin" },
     });
   }
 
